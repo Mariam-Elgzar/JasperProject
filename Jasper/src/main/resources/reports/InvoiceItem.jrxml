@@ -1,5 +1,5 @@
 <!-- Created with Jaspersoft Studio version 7.0.3.final using JasperReports Library version 7.0.3-41034ca841d452f3305ba55b9042260aaa1ab5dd  -->
-<jasperReport name="InvoiceItem" language="java" columnCount="1" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="4eedbb89-b4f6-4469-9ab6-f642a1688cf7">
+<jasperReport name="InvoiceItem" language="java" columnCount="1" pageWidth="595" pageHeight="842" whenNoDataType="NoPages" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0"  uuid="4eedbb89-b4f6-4469-9ab6-f642a1688cf7">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="New Data Adapter (2)"/>
 	<property name="template.engine" value="tabular_template"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
@@ -774,7 +774,7 @@
 		<property name="com.jaspersoft.studio.field.tree.path" value="bill_run"/>
 	</field>
 	<title height="802" splitType="Stretch">
-		<element kind="rectangle" uuid="56505324-916d-4b4e-be18-1ec98de3465b" x="-20" y="-20" width="595" height="802" backcolor="#0E1999">
+		<element kind="rectangle" uuid="56505324-916d-4b4e-be18-1ec98de3465b" x="-20" y="-20" width="615" height="822" backcolor="#0E1999">
 			<property name="com.jaspersoft.studio.unit.x" value="px"/>
 			<property name="com.jaspersoft.studio.unit.y" value="px"/>
 			<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -787,10 +787,10 @@
 		<element kind="rectangle" uuid="e2f020c0-bbc0-412c-baf7-be8b86835c5b" x="-20" y="339" width="40" height="132" backcolor="#080B66" radius="0">
 			<pen lineWidth="0.0" lineStyle="Solid"/>
 		</element>
-		<element kind="rectangle" uuid="04a0f853-25ab-419b-a56c-fb4f670d191f" x="445" y="-20" width="130" height="132" backcolor="#080B66" radius="0">
+		<element kind="rectangle" uuid="04a0f853-25ab-419b-a56c-fb4f670d191f" x="465" y="-20" width="130" height="132" backcolor="#080B66" radius="0">
 			<pen lineWidth="0.0" lineStyle="Solid"/>
 		</element>
-		<element kind="rectangle" uuid="132fbb8d-14bf-4a62-8acd-96f376ba2abe" x="-20" y="-20" width="595" height="491" backcolor="#080B66" radius="50">
+		<element kind="rectangle" uuid="132fbb8d-14bf-4a62-8acd-96f376ba2abe" x="-20" y="-20" width="615" height="491" backcolor="#080B66" radius="50">
 			<pen lineWidth="0.0" lineStyle="Solid"/>
 		</element>
 		<element kind="staticText" uuid="4bc0c1af-b2f6-40d0-9915-34af50aad534" x="300" y="110" width="200" height="25" forecolor="#FFFFFF" fontName="Franklin Gothic Demi" fontSize="15.0" printRepeatedValues="false" bold="false" vTextAlign="Middle" style="Detail">
@@ -798,17 +798,17 @@
 			<property name="local_mesure_unitheight" value="pixel"/>
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 		</element>
-		<element kind="staticText" uuid="f27015b6-396e-4698-8f2a-fc224d7e35c9" x="300" y="175" width="72" height="20" forecolor="#FFFFFF" fontSize="11.0" hTextAlign="Left" vTextAlign="Middle">
+		<element kind="staticText" uuid="f27015b6-396e-4698-8f2a-fc224d7e35c9" x="300" y="159" width="50" height="20" forecolor="#FFFFFF" fontSize="11.0" hTextAlign="Left" vTextAlign="Middle">
 			<text><![CDATA[Created Date:]]></text>
 			<box rightPadding="4"/>
 		</element>
-		<element kind="textField" uuid="813f0f5b-62bd-4563-8d89-25b7e7ec7bcf" x="390" y="180" width="84" height="20" forecolor="#FFFFFF" fontSize="11.0" pattern="EEEEE dd MMMMM yyyy" vTextAlign="Middle">
+		<element kind="textField" uuid="813f0f5b-62bd-4563-8d89-25b7e7ec7bcf" x="374" y="160" width="84" height="20" forecolor="#FFFFFF" fontSize="11.0" pattern="EEEEE dd MMMMM yyyy" vTextAlign="Middle">
 			<expression><![CDATA[$F{invoice_createddate}]]></expression>
 		</element>
 		<element kind="image" uuid="643cddf0-1142-4a00-a170-5b11c7d555cc" x="300" y="20" width="120" height="60" forecolor="#FFFFFF" backcolor="#FFFFFF" hImageAlign="Center" style="SubTitle">
 			<expression><![CDATA[$P{LogoPath}]]></expression>
 		</element>
-		<element kind="staticText" uuid="dec6b581-e7c8-4fad-8cd7-06c91284f314" x="300" y="150" width="50" height="20" forecolor="#FFFFFF" fontSize="11.0" hTextAlign="Right" vTextAlign="Middle">
+		<element kind="staticText" uuid="dec6b581-e7c8-4fad-8cd7-06c91284f314" x="300" y="140" width="50" height="20" forecolor="#FFFFFF" fontSize="11.0" hTextAlign="Right" vTextAlign="Middle">
 			<text><![CDATA[Invoice #]]></text>
 			<box rightPadding="4"/>
 		</element>
@@ -817,33 +817,33 @@
 			<property name="local_mesure_unitheight" value="pixel"/>
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 		</element>
-		<element kind="staticText" uuid="96c3a22d-c1a1-4313-81a7-eb4a1d15e6a7" x="40" y="140" width="200" height="20" forecolor="#FAF7F7" backcolor="#FFFFFF" fontName="Franklin Gothic Demi" fontSize="15.0" bold="false" vTextAlign="Middle">
+		<element kind="staticText" uuid="96c3a22d-c1a1-4313-81a7-eb4a1d15e6a7" x="37" y="115" width="200" height="20" forecolor="#FAF7F7" backcolor="#FFFFFF" fontName="Franklin Gothic Demi" fontSize="15.0" bold="false" vTextAlign="Middle">
 			<text><![CDATA[BILLED TO:]]></text>
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<property name="com.jaspersoft.studio.unit.width" value="px"/>
 		</element>
-		<element kind="rectangle" uuid="7e235505-c173-486f-a45a-caad2ddbf4b0" x="20" y="240" width="503" height="390" radius="20">
+		<element kind="rectangle" uuid="7e235505-c173-486f-a45a-caad2ddbf4b0" x="37" y="241" width="503" height="390" radius="20">
 			<pen lineColor="#FFFFFF"/>
 		</element>
-		<element kind="image" uuid="2864d3dd-9b30-49bc-88ad-76301927fdbe" x="190" y="570" width="159" height="49" hImageAlign="Center">
+		<element kind="image" uuid="2864d3dd-9b30-49bc-88ad-76301927fdbe" x="207" y="571" width="159" height="49" hImageAlign="Center">
 			<expression><![CDATA[$P{LogoPath}]]></expression>
 		</element>
-		<element kind="staticText" uuid="85f62923-ea7a-43c2-9ab8-1328439fab75" x="300" y="440" width="80" height="20" bold="true">
+		<element kind="staticText" uuid="85f62923-ea7a-43c2-9ab8-1328439fab75" x="317" y="441" width="80" height="20" bold="true">
 			<text><![CDATA[Discount]]></text>
 		</element>
-		<element kind="staticText" uuid="df20c43c-6add-494f-b1ef-79042e552736" x="300" y="460" width="80" height="20" bold="true">
+		<element kind="staticText" uuid="df20c43c-6add-494f-b1ef-79042e552736" x="317" y="461" width="80" height="20" bold="true">
 			<text><![CDATA[Tax]]></text>
 		</element>
-		<element kind="textField" uuid="e8a4b453-bb22-4d22-b406-e6265e2130b2" x="400" y="440" width="100" height="20">
+		<element kind="textField" uuid="e8a4b453-bb22-4d22-b406-e6265e2130b2" x="417" y="441" width="100" height="20" vTextAlign="Middle">
 			<expression><![CDATA[$F{discountvalue}]]></expression>
 		</element>
-		<element kind="textField" uuid="acf92379-a981-4c68-91ff-203a628f2ee5" x="400" y="460" width="100" height="20">
+		<element kind="textField" uuid="acf92379-a981-4c68-91ff-203a628f2ee5" x="417" y="461" width="100" height="20" vTextAlign="Middle">
 			<expression><![CDATA[$F{taxsum}]]></expression>
 		</element>
-		<element kind="staticText" uuid="779332e9-8786-493f-b08c-63d2434103a8" x="37" y="510" width="196" height="20" bold="true">
+		<element kind="staticText" uuid="779332e9-8786-493f-b08c-63d2434103a8" x="54" y="521" width="50" height="20" bold="true">
 			<text><![CDATA[City]]></text>
 		</element>
-		<element kind="textField" uuid="3bd7644b-2ca1-4334-b968-aff1e0c47f2c" x="37" y="530" width="100" height="30">
+		<element kind="textField" uuid="3bd7644b-2ca1-4334-b968-aff1e0c47f2c" x="137" y="516" width="100" height="30" vTextAlign="Middle">
 			<expression><![CDATA[$F{billcity}]]></expression>
 		</element>
 		<element kind="staticText" uuid="c6ea7f50-b493-494b-9b58-23d14b69374d" x="280" y="660" width="205" height="20" forecolor="#FFFFFF" fontName="Franklin Gothic Demi" fontSize="11.0" vTextAlign="Middle">
@@ -851,8 +851,8 @@
 			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<property name="com.jaspersoft.studio.unit.y" value="px"/>
 		</element>
-		<element kind="frame" uuid="a61ad7b0-2154-4061-9f96-94fe9b9b38b5" x="20" y="312" width="503" height="60" forecolor="#FFFFFF">
-			<element kind="component" uuid="5db26938-5577-43d9-a9ef-ab72ed26fb0d" x="0" y="1" width="503" height="60" forecolor="#050000">
+		<element kind="frame" uuid="a61ad7b0-2154-4061-9f96-94fe9b9b38b5" x="37" y="312" width="486" height="60" forecolor="#FFFFFF">
+			<element kind="component" uuid="5db26938-5577-43d9-a9ef-ab72ed26fb0d" x="-2" y="1" width="486" height="60" forecolor="#050000">
 				<component kind="table">
 					<datasetRun uuid="f68c9fff-d795-4a2b-b12a-e7cd918b61fe" subDataset="tableDataset">
 						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
@@ -956,29 +956,41 @@
 				<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 			</box>
 		</element>
-		<element kind="staticText" uuid="d1c15611-30bf-4102-834b-6e47ec0602f7" x="300" y="510" width="80" height="19" forecolor="#050101" backcolor="#0E2B7D" fontSize="12.0" bold="true" vTextAlign="Middle">
+		<element kind="staticText" uuid="d1c15611-30bf-4102-834b-6e47ec0602f7" x="317" y="492" width="80" height="19" forecolor="#050101" backcolor="#0E2B7D" fontSize="12.0" bold="true" vTextAlign="Middle">
 			<text><![CDATA[TOTAL]]></text>
 		</element>
-		<element kind="textField" uuid="307343f9-a8f2-4d48-9ad1-55dffd20b4db" x="400" y="510" width="100" height="19">
+		<element kind="textField" uuid="307343f9-a8f2-4d48-9ad1-55dffd20b4db" x="417" y="492" width="100" height="19" vTextAlign="Middle">
 			<expression><![CDATA[$F{total}]]></expression>
 		</element>
-		<element kind="textField" uuid="cfab0114-277d-4303-9708-606b26559280" x="382" y="145" width="100" height="30">
+		<element kind="textField" uuid="cfab0114-277d-4303-9708-606b26559280" x="374" y="140" width="100" height="20" forecolor="#FFFFFF" markup="styled" blankWhenNull="false" vTextAlign="Middle">
 			<expression><![CDATA[$F{invoiceno}]]></expression>
 		</element>
-		<element kind="textField" uuid="d3b29cec-faff-40e2-af12-697696519d2d" x="40" y="160" width="150" height="19">
+		<element kind="textField" uuid="d3b29cec-faff-40e2-af12-697696519d2d" x="37" y="135" width="150" height="19" forecolor="#FFFFFF" vTextAlign="Middle">
 			<expression><![CDATA[$F{customername}]]></expression>
 		</element>
-		<element kind="textField" uuid="ef0dea5f-358a-4edb-b351-376cbad6a87f" x="40" y="180" width="100" height="30">
+		<element kind="textField" uuid="ef0dea5f-358a-4edb-b351-376cbad6a87f" x="37" y="155" width="100" height="24" forecolor="#FFFFFF" vTextAlign="Middle">
 			<expression><![CDATA[$F{billaddress}]]></expression>
 		</element>
-		<element kind="textField" uuid="6ae0e2ab-45ec-44d6-be7f-83d0aad067a1" x="280" y="680" width="130" height="19">
+		<element kind="textField" uuid="6ae0e2ab-45ec-44d6-be7f-83d0aad067a1" x="280" y="680" width="130" height="19" forecolor="#FFFFFF" vTextAlign="Middle">
 			<expression><![CDATA[$F{contactemail}]]></expression>
 		</element>
-		<element kind="textField" uuid="bc2f60f7-1f93-42a5-816c-6df49b2a971f" x="37" y="660" width="150" height="30">
+		<element kind="textField" uuid="bc2f60f7-1f93-42a5-816c-6df49b2a971f" x="37" y="660" width="150" height="30" forecolor="#FFFFFF" vTextAlign="Middle">
 			<expression><![CDATA[$F{billaddress}]]></expression>
 		</element>
-		<element kind="textField" uuid="48120b60-893f-42f1-b919-20adebed46e5" x="280" y="699" width="130" height="20">
+		<element kind="textField" uuid="48120b60-893f-42f1-b919-20adebed46e5" x="280" y="699" width="130" height="20" forecolor="#FFFFFF" vTextAlign="Middle">
 			<expression><![CDATA[$F{contactphone}]]></expression>
+		</element>
+		<element kind="staticText" uuid="a2914e9d-ab15-4ccb-a72e-546056ed6e43" x="47" y="436" width="80" height="20" bold="true">
+			<text><![CDATA[Invoice from]]></text>
+		</element>
+		<element kind="staticText" uuid="4bda0186-c35b-4278-9229-013db7d5a1a9" x="47" y="472" width="80" height="20" bold="true">
+			<text><![CDATA[Invoice to]]></text>
+		</element>
+		<element kind="textField" uuid="fa095550-ec6c-4fc9-aef1-759b80a87423" x="137" y="431" width="100" height="30" vTextAlign="Middle">
+			<expression><![CDATA[$F{invoicefrom}]]></expression>
+		</element>
+		<element kind="textField" uuid="e8ec41f9-df80-4246-a53c-29b21e0a0698" x="137" y="471" width="100" height="30" vTextAlign="Middle">
+			<expression><![CDATA[$F{invoiceto}]]></expression>
 		</element>
 	</title>
 	<columnHeader/>

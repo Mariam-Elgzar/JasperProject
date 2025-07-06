@@ -1,0 +1,991 @@
+<!-- Created with Jaspersoft Studio version 7.0.3.final using JasperReports Library version 7.0.3-41034ca841d452f3305ba55b9042260aaa1ab5dd  -->
+<jasperReport name="InvoiceItem" language="java" columnCount="1" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="4eedbb89-b4f6-4469-9ab6-f642a1688cf7">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="New Data Adapter (2)"/>
+	<property name="template.engine" value="tabular_template"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<style name="Title" forecolor="#FFFFFF" fontName="Times New Roman" fontSize="50.0" bold="false" pdfFontName="Times-Bold"/>
+	<style name="SubTitle" forecolor="#CCCCCC" fontName="Times New Roman" fontSize="18.0" bold="false" pdfFontName="Times-Roman"/>
+	<style name="Column header" forecolor="#666666" fontName="Times New Roman" fontSize="14.0" bold="true"/>
+	<style name="Detail" mode="Transparent" fontName="Times New Roman"/>
+	<style name="Row" mode="Transparent" fontName="Times New Roman" pdfFontName="Times-Roman">
+		<conditionalStyle mode="Opaque" backcolor="#F0EFEF">
+			<conditionExpression><![CDATA["INV0001"]]></conditionExpression>
+		</conditionalStyle>
+	</style>
+	<style name="Table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+			<topPen lineWidth="1.0" lineColor="#000000"/>
+			<leftPen lineWidth="1.0" lineColor="#000000"/>
+			<bottomPen lineWidth="1.0" lineColor="#000000"/>
+			<rightPen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_CH" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+		<conditionalStyle backcolor="#D8D8D8">
+			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
+		</conditionalStyle>
+	</style>
+	<dataset name="tableDataset" uuid="b022afc2-2173-4a33-98df-503f2d9b4626">
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="NTS"/>
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w1" value="657"/>
+		<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w2" value="331"/>
+		<parameter name="MaterialType" class="java.lang.String"/>
+		<parameter name="Date_From" class="java.lang.String"/>
+		<parameter name="Date_To" class="java.lang.String"/>
+		<query language="SQL"><![CDATA[SELECT
+    bh.invoiceno,
+    bh.recid AS header_id,
+    bh.invoicetoaccountno AS accountnumber,
+    bh.invoicetoname AS customername,
+    bh.billaddress,
+    bh.billunit,
+    bh.billpostal,
+    bh.billprov,
+    bh.billcity,
+    bh.contactname,
+    bh.contactphone,
+    bh.contmail AS contactemail,
+    bh.createddate AS invoice_createddate,
+    bh.min_fromdate,
+    bh.max_fromdate,
+    bh.total,
+    bh.taxsum,
+    bh.installationsum,
+    bh.valuesum,
+    bh.prev_collectionvalue * -1 AS paid,
+    bh.collectionstatusid,
+    bh.serializeddate,
+    COALESCE(bh.branchid, 0) AS branchid,
+    bh.area,
+    COALESCE(bh.headertype, '') AS headertype,
+    bh.bill_grandtotal,
+    bh.bill_pervpayment,
+    bh.bill_currentpayment,
+    bh.bill_prevrundate,
+    bh.bill_currentrundate,
+    bh.invoicestartdate,
+    COALESCE(bh.depositbalance, 0) AS depositbalance,
+
+    bl.recid AS line_id,
+    bl.orderserviceid,
+    bl.invoicefrom,
+    bl.invoiceto,
+    bl.componentsname,
+    bl.service AS service,
+    COALESCE(bl.linetypeid, 0) AS linetypeid,
+    COALESCE(bl.quantity, 0) AS quantity,
+    COALESCE(bl.debitvalue, 0) AS debitvalue,
+    COALESCE(bl.creditvalue, 0) AS creditvalue,
+    COALESCE(bl.debitvalue, 0) - COALESCE(bl.creditvalue, 0) AS type_charge,
+    COALESCE(bl.changerate, 0) AS changerate,
+    bl.comments,
+    COALESCE(bl.beforpro, 0) AS beforpro,
+    COALESCE(bl.discountvalue, 0) AS discountvalue,
+    bl.billingfrequency,
+    bl.entereddate AS line_createddate,
+    bl.parent_orderserviceid,
+
+    -- Currency ID and mapped value
+    bl.currencyid,
+    CASE
+        WHEN bl.currencyid = 1 THEN 'USD'
+        WHEN bl.currencyid = 3 THEN 'LE'
+        WHEN bl.currencyid = 2 THEN 'IQD'
+        ELSE 'IQD'
+    END AS currency_name,
+
+    br.rundate,
+    br.run_caption,
+    br.run_cover_to_date,
+    br.agentname,
+    br.laststatus,
+    br.laststatusdate
+
+    FROM bill_billheader bh
+    JOIN bill_bill_lines bl ON bl.headerid = bh.recid
+    JOIN bill_run br ON bh.runid = br.recid
+    WHERE bh.invoiceno = '1247'
+    ORDER BY bl.entereddate]]></query>
+		<field name="invoiceno" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="invoiceno"/>
+			<property name="com.jaspersoft.studio.field.label" value="invoiceno"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+		</field>
+		<field name="header_id" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.name" value="header_id"/>
+			<property name="com.jaspersoft.studio.field.label" value="header_id"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+		</field>
+		<field name="accountnumber" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="accountnumber"/>
+			<property name="com.jaspersoft.studio.field.label" value="accountnumber"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+		</field>
+		<field name="customername" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="customername"/>
+			<property name="com.jaspersoft.studio.field.label" value="customername"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+		</field>
+		<field name="billaddress" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="billaddress"/>
+			<property name="com.jaspersoft.studio.field.label" value="billaddress"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+		</field>
+		<field name="billunit" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="billunit"/>
+			<property name="com.jaspersoft.studio.field.label" value="billunit"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+		</field>
+		<field name="billpostal" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="billpostal"/>
+			<property name="com.jaspersoft.studio.field.label" value="billpostal"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+		</field>
+		<field name="billprov" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="billprov"/>
+			<property name="com.jaspersoft.studio.field.label" value="billprov"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+		</field>
+		<field name="billcity" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="billcity"/>
+			<property name="com.jaspersoft.studio.field.label" value="billcity"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+		</field>
+		<field name="contactname" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="contactname"/>
+			<property name="com.jaspersoft.studio.field.label" value="contactname"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+		</field>
+		<field name="contactphone" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="contactphone"/>
+			<property name="com.jaspersoft.studio.field.label" value="contactphone"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+		</field>
+		<field name="contactemail" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="contactemail"/>
+			<property name="com.jaspersoft.studio.field.label" value="contactemail"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+		</field>
+		<field name="invoice_createddate" class="java.sql.Timestamp">
+			<property name="com.jaspersoft.studio.field.name" value="invoice_createddate"/>
+			<property name="com.jaspersoft.studio.field.label" value="invoice_createddate"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+		</field>
+		<field name="min_fromdate" class="java.sql.Timestamp">
+			<property name="com.jaspersoft.studio.field.name" value="min_fromdate"/>
+			<property name="com.jaspersoft.studio.field.label" value="min_fromdate"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+		</field>
+		<field name="max_fromdate" class="java.sql.Timestamp">
+			<property name="com.jaspersoft.studio.field.name" value="max_fromdate"/>
+			<property name="com.jaspersoft.studio.field.label" value="max_fromdate"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+		</field>
+		<field name="total" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.name" value="total"/>
+			<property name="com.jaspersoft.studio.field.label" value="total"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+		</field>
+		<field name="taxsum" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.name" value="taxsum"/>
+			<property name="com.jaspersoft.studio.field.label" value="taxsum"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+		</field>
+		<field name="installationsum" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.name" value="installationsum"/>
+			<property name="com.jaspersoft.studio.field.label" value="installationsum"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+		</field>
+		<field name="valuesum" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.name" value="valuesum"/>
+			<property name="com.jaspersoft.studio.field.label" value="valuesum"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+		</field>
+		<field name="paid" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.name" value="paid"/>
+			<property name="com.jaspersoft.studio.field.label" value="paid"/>
+		</field>
+		<field name="collectionstatusid" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.name" value="collectionstatusid"/>
+			<property name="com.jaspersoft.studio.field.label" value="collectionstatusid"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+		</field>
+		<field name="serializeddate" class="java.sql.Timestamp">
+			<property name="com.jaspersoft.studio.field.name" value="serializeddate"/>
+			<property name="com.jaspersoft.studio.field.label" value="serializeddate"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+		</field>
+		<field name="branchid" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.name" value="branchid"/>
+			<property name="com.jaspersoft.studio.field.label" value="branchid"/>
+		</field>
+		<field name="area" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="area"/>
+			<property name="com.jaspersoft.studio.field.label" value="area"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+		</field>
+		<field name="headertype" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="headertype"/>
+			<property name="com.jaspersoft.studio.field.label" value="headertype"/>
+		</field>
+		<field name="bill_grandtotal" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.name" value="bill_grandtotal"/>
+			<property name="com.jaspersoft.studio.field.label" value="bill_grandtotal"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+		</field>
+		<field name="bill_pervpayment" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.name" value="bill_pervpayment"/>
+			<property name="com.jaspersoft.studio.field.label" value="bill_pervpayment"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+		</field>
+		<field name="bill_currentpayment" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.name" value="bill_currentpayment"/>
+			<property name="com.jaspersoft.studio.field.label" value="bill_currentpayment"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+		</field>
+		<field name="bill_prevrundate" class="java.sql.Timestamp">
+			<property name="com.jaspersoft.studio.field.name" value="bill_prevrundate"/>
+			<property name="com.jaspersoft.studio.field.label" value="bill_prevrundate"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+		</field>
+		<field name="bill_currentrundate" class="java.sql.Timestamp">
+			<property name="com.jaspersoft.studio.field.name" value="bill_currentrundate"/>
+			<property name="com.jaspersoft.studio.field.label" value="bill_currentrundate"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+		</field>
+		<field name="invoicestartdate" class="java.sql.Timestamp">
+			<property name="com.jaspersoft.studio.field.name" value="invoicestartdate"/>
+			<property name="com.jaspersoft.studio.field.label" value="invoicestartdate"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+		</field>
+		<field name="depositbalance" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.name" value="depositbalance"/>
+			<property name="com.jaspersoft.studio.field.label" value="depositbalance"/>
+		</field>
+		<field name="line_id" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.name" value="line_id"/>
+			<property name="com.jaspersoft.studio.field.label" value="line_id"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_bill_lines"/>
+		</field>
+		<field name="orderserviceid" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="orderserviceid"/>
+			<property name="com.jaspersoft.studio.field.label" value="orderserviceid"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_bill_lines"/>
+		</field>
+		<field name="invoicefrom" class="java.sql.Date">
+			<property name="com.jaspersoft.studio.field.name" value="invoicefrom"/>
+			<property name="com.jaspersoft.studio.field.label" value="invoicefrom"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_bill_lines"/>
+		</field>
+		<field name="invoiceto" class="java.sql.Date">
+			<property name="com.jaspersoft.studio.field.name" value="invoiceto"/>
+			<property name="com.jaspersoft.studio.field.label" value="invoiceto"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_bill_lines"/>
+		</field>
+		<field name="componentsname" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="componentsname"/>
+			<property name="com.jaspersoft.studio.field.label" value="componentsname"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_bill_lines"/>
+		</field>
+		<field name="service" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="service"/>
+			<property name="com.jaspersoft.studio.field.label" value="service"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_bill_lines"/>
+		</field>
+		<field name="linetypeid" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.name" value="linetypeid"/>
+			<property name="com.jaspersoft.studio.field.label" value="linetypeid"/>
+		</field>
+		<field name="quantity" class="java.lang.Integer">
+			<property name="com.jaspersoft.studio.field.name" value="quantity"/>
+			<property name="com.jaspersoft.studio.field.label" value="quantity"/>
+		</field>
+		<field name="debitvalue" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.name" value="debitvalue"/>
+			<property name="com.jaspersoft.studio.field.label" value="debitvalue"/>
+		</field>
+		<field name="creditvalue" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.name" value="creditvalue"/>
+			<property name="com.jaspersoft.studio.field.label" value="creditvalue"/>
+		</field>
+		<field name="type_charge" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.name" value="type_charge"/>
+			<property name="com.jaspersoft.studio.field.label" value="type_charge"/>
+		</field>
+		<field name="changerate" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.name" value="changerate"/>
+			<property name="com.jaspersoft.studio.field.label" value="changerate"/>
+		</field>
+		<field name="comments" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="comments"/>
+			<property name="com.jaspersoft.studio.field.label" value="comments"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_bill_lines"/>
+		</field>
+		<field name="beforpro" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.name" value="beforpro"/>
+			<property name="com.jaspersoft.studio.field.label" value="beforpro"/>
+		</field>
+		<field name="discountvalue" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.name" value="discountvalue"/>
+			<property name="com.jaspersoft.studio.field.label" value="discountvalue"/>
+		</field>
+		<field name="billingfrequency" class="java.lang.Integer">
+			<property name="com.jaspersoft.studio.field.name" value="billingfrequency"/>
+			<property name="com.jaspersoft.studio.field.label" value="billingfrequency"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_bill_lines"/>
+		</field>
+		<field name="line_createddate" class="java.sql.Timestamp">
+			<property name="com.jaspersoft.studio.field.name" value="line_createddate"/>
+			<property name="com.jaspersoft.studio.field.label" value="line_createddate"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_bill_lines"/>
+		</field>
+		<field name="parent_orderserviceid" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="parent_orderserviceid"/>
+			<property name="com.jaspersoft.studio.field.label" value="parent_orderserviceid"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_bill_lines"/>
+		</field>
+		<field name="currencyid" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.name" value="currencyid"/>
+			<property name="com.jaspersoft.studio.field.label" value="currencyid"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_bill_lines"/>
+		</field>
+		<field name="currency_name" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="currency_name"/>
+			<property name="com.jaspersoft.studio.field.label" value="currency_name"/>
+		</field>
+		<field name="rundate" class="java.sql.Timestamp">
+			<property name="com.jaspersoft.studio.field.name" value="rundate"/>
+			<property name="com.jaspersoft.studio.field.label" value="rundate"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_run"/>
+		</field>
+		<field name="run_caption" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="run_caption"/>
+			<property name="com.jaspersoft.studio.field.label" value="run_caption"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_run"/>
+		</field>
+		<field name="run_cover_to_date" class="java.sql.Timestamp">
+			<property name="com.jaspersoft.studio.field.name" value="run_cover_to_date"/>
+			<property name="com.jaspersoft.studio.field.label" value="run_cover_to_date"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_run"/>
+		</field>
+		<field name="agentname" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="agentname"/>
+			<property name="com.jaspersoft.studio.field.label" value="agentname"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_run"/>
+		</field>
+		<field name="laststatus" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="laststatus"/>
+			<property name="com.jaspersoft.studio.field.label" value="laststatus"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_run"/>
+		</field>
+		<field name="laststatusdate" class="java.sql.Timestamp">
+			<property name="com.jaspersoft.studio.field.name" value="laststatusdate"/>
+			<property name="com.jaspersoft.studio.field.label" value="laststatusdate"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_run"/>
+		</field>
+		<variable name="Variable_1" class="java.lang.String"/>
+	</dataset>
+	<parameter name="MaterialType" class="java.lang.String"/>
+	<parameter name="Date_From" class="java.lang.String"/>
+	<parameter name="Date_To" class="java.lang.String"/>
+	<parameter name="Path" class="java.lang.String"/>
+	<parameter name="Header" class="java.lang.String"/>
+	<parameter name="LogoPath" class="java.lang.String"/>
+	<parameter name="CompanyName" class="java.lang.String"/>
+	<parameter name="PlantName" class="java.lang.String"/>
+	<parameter name="PlantType" class="java.lang.String"/>
+	<parameter name="SiteName" class="java.lang.String"/>
+	<query language="sql"><![CDATA[SELECT
+    bh.invoiceno,
+    bh.recid AS header_id,
+    bh.invoicetoaccountno AS accountnumber,
+    bh.invoicetoname AS customername,
+    bh.billaddress,
+    bh.billunit,
+    bh.billpostal,
+    bh.billprov,
+    bh.billcity,
+    bh.contactname,
+    bh.contactphone,
+    bh.contmail AS contactemail,
+    bh.createddate AS invoice_createddate,
+    bh.min_fromdate,
+    bh.max_fromdate,
+    bh.total,
+    bh.taxsum,
+    bh.installationsum,
+    bh.valuesum,
+    bh.prev_collectionvalue * -1 AS paid,
+    bh.collectionstatusid,
+    bh.serializeddate,
+    COALESCE(bh.branchid, 0) AS branchid,
+    bh.area,
+    COALESCE(bh.headertype, '') AS headertype,
+    bh.bill_grandtotal,
+    bh.bill_pervpayment,
+    bh.bill_currentpayment,
+    bh.bill_prevrundate,
+    bh.bill_currentrundate,
+    bh.invoicestartdate,
+    COALESCE(bh.depositbalance, 0) AS depositbalance,
+
+    bl.recid AS line_id,
+    bl.orderserviceid,
+    bl.invoicefrom,
+    bl.invoiceto,
+    bl.componentsname,
+    bl.service AS service,
+    COALESCE(bl.linetypeid, 0) AS linetypeid,
+    COALESCE(bl.quantity, 0) AS quantity,
+    COALESCE(bl.debitvalue, 0) AS debitvalue,
+    COALESCE(bl.creditvalue, 0) AS creditvalue,
+    COALESCE(bl.debitvalue, 0) - COALESCE(bl.creditvalue, 0) AS type_charge,
+    COALESCE(bl.changerate, 0) AS changerate,
+    bl.comments,
+    COALESCE(bl.beforpro, 0) AS beforpro,
+    COALESCE(bl.discountvalue, 0) AS discountvalue,
+    bl.billingfrequency,
+    bl.entereddate AS line_createddate,
+    bl.parent_orderserviceid,
+
+    -- Currency ID and mapped value
+    bl.currencyid,
+    CASE
+        WHEN bl.currencyid = 1 THEN 'USD'
+        WHEN bl.currencyid = 3 THEN 'LE'
+        WHEN bl.currencyid = 2 THEN 'IQD'
+        ELSE 'IQD'
+    END AS currency_name,
+
+    br.rundate,
+    br.run_caption,
+    br.run_cover_to_date,
+    br.agentname,
+    br.laststatus,
+    br.laststatusdate
+
+    FROM bill_billheader bh
+    JOIN bill_bill_lines bl ON bl.headerid = bh.recid
+    JOIN bill_run br ON bh.runid = br.recid
+    WHERE bh.invoiceno = '1247'
+    ORDER BY bl.entereddate]]></query>
+	<field name="invoiceno" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="invoiceno"/>
+		<property name="com.jaspersoft.studio.field.label" value="invoiceno"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+	</field>
+	<field name="header_id" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="header_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="header_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+	</field>
+	<field name="accountnumber" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="accountnumber"/>
+		<property name="com.jaspersoft.studio.field.label" value="accountnumber"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+	</field>
+	<field name="customername" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="customername"/>
+		<property name="com.jaspersoft.studio.field.label" value="customername"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+	</field>
+	<field name="billaddress" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="billaddress"/>
+		<property name="com.jaspersoft.studio.field.label" value="billaddress"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+	</field>
+	<field name="billunit" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="billunit"/>
+		<property name="com.jaspersoft.studio.field.label" value="billunit"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+	</field>
+	<field name="billpostal" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="billpostal"/>
+		<property name="com.jaspersoft.studio.field.label" value="billpostal"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+	</field>
+	<field name="billprov" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="billprov"/>
+		<property name="com.jaspersoft.studio.field.label" value="billprov"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+	</field>
+	<field name="billcity" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="billcity"/>
+		<property name="com.jaspersoft.studio.field.label" value="billcity"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+	</field>
+	<field name="contactname" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="contactname"/>
+		<property name="com.jaspersoft.studio.field.label" value="contactname"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+	</field>
+	<field name="contactphone" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="contactphone"/>
+		<property name="com.jaspersoft.studio.field.label" value="contactphone"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+	</field>
+	<field name="contactemail" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="contactemail"/>
+		<property name="com.jaspersoft.studio.field.label" value="contactemail"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+	</field>
+	<field name="invoice_createddate" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="invoice_createddate"/>
+		<property name="com.jaspersoft.studio.field.label" value="invoice_createddate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+	</field>
+	<field name="min_fromdate" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="min_fromdate"/>
+		<property name="com.jaspersoft.studio.field.label" value="min_fromdate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+	</field>
+	<field name="max_fromdate" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="max_fromdate"/>
+		<property name="com.jaspersoft.studio.field.label" value="max_fromdate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+	</field>
+	<field name="total" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="total"/>
+		<property name="com.jaspersoft.studio.field.label" value="total"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+	</field>
+	<field name="taxsum" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="taxsum"/>
+		<property name="com.jaspersoft.studio.field.label" value="taxsum"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+	</field>
+	<field name="installationsum" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="installationsum"/>
+		<property name="com.jaspersoft.studio.field.label" value="installationsum"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+	</field>
+	<field name="valuesum" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="valuesum"/>
+		<property name="com.jaspersoft.studio.field.label" value="valuesum"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+	</field>
+	<field name="paid" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="paid"/>
+		<property name="com.jaspersoft.studio.field.label" value="paid"/>
+	</field>
+	<field name="collectionstatusid" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="collectionstatusid"/>
+		<property name="com.jaspersoft.studio.field.label" value="collectionstatusid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+	</field>
+	<field name="serializeddate" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="serializeddate"/>
+		<property name="com.jaspersoft.studio.field.label" value="serializeddate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+	</field>
+	<field name="branchid" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="branchid"/>
+		<property name="com.jaspersoft.studio.field.label" value="branchid"/>
+	</field>
+	<field name="area" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="area"/>
+		<property name="com.jaspersoft.studio.field.label" value="area"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+	</field>
+	<field name="headertype" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="headertype"/>
+		<property name="com.jaspersoft.studio.field.label" value="headertype"/>
+	</field>
+	<field name="bill_grandtotal" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="bill_grandtotal"/>
+		<property name="com.jaspersoft.studio.field.label" value="bill_grandtotal"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+	</field>
+	<field name="bill_pervpayment" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="bill_pervpayment"/>
+		<property name="com.jaspersoft.studio.field.label" value="bill_pervpayment"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+	</field>
+	<field name="bill_currentpayment" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="bill_currentpayment"/>
+		<property name="com.jaspersoft.studio.field.label" value="bill_currentpayment"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+	</field>
+	<field name="bill_prevrundate" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="bill_prevrundate"/>
+		<property name="com.jaspersoft.studio.field.label" value="bill_prevrundate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+	</field>
+	<field name="bill_currentrundate" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="bill_currentrundate"/>
+		<property name="com.jaspersoft.studio.field.label" value="bill_currentrundate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+	</field>
+	<field name="invoicestartdate" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="invoicestartdate"/>
+		<property name="com.jaspersoft.studio.field.label" value="invoicestartdate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+	</field>
+	<field name="depositbalance" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="depositbalance"/>
+		<property name="com.jaspersoft.studio.field.label" value="depositbalance"/>
+	</field>
+	<field name="line_id" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="line_id"/>
+		<property name="com.jaspersoft.studio.field.label" value="line_id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="bill_bill_lines"/>
+	</field>
+	<field name="orderserviceid" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="orderserviceid"/>
+		<property name="com.jaspersoft.studio.field.label" value="orderserviceid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="bill_bill_lines"/>
+	</field>
+	<field name="invoicefrom" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="invoicefrom"/>
+		<property name="com.jaspersoft.studio.field.label" value="invoicefrom"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="bill_bill_lines"/>
+	</field>
+	<field name="invoiceto" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.name" value="invoiceto"/>
+		<property name="com.jaspersoft.studio.field.label" value="invoiceto"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="bill_bill_lines"/>
+	</field>
+	<field name="componentsname" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="componentsname"/>
+		<property name="com.jaspersoft.studio.field.label" value="componentsname"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="bill_bill_lines"/>
+	</field>
+	<field name="service" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="service"/>
+		<property name="com.jaspersoft.studio.field.label" value="service"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="bill_bill_lines"/>
+	</field>
+	<field name="linetypeid" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="linetypeid"/>
+		<property name="com.jaspersoft.studio.field.label" value="linetypeid"/>
+	</field>
+	<field name="quantity" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="quantity"/>
+		<property name="com.jaspersoft.studio.field.label" value="quantity"/>
+	</field>
+	<field name="debitvalue" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="debitvalue"/>
+		<property name="com.jaspersoft.studio.field.label" value="debitvalue"/>
+	</field>
+	<field name="creditvalue" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="creditvalue"/>
+		<property name="com.jaspersoft.studio.field.label" value="creditvalue"/>
+	</field>
+	<field name="type_charge" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="type_charge"/>
+		<property name="com.jaspersoft.studio.field.label" value="type_charge"/>
+	</field>
+	<field name="changerate" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="changerate"/>
+		<property name="com.jaspersoft.studio.field.label" value="changerate"/>
+	</field>
+	<field name="comments" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="comments"/>
+		<property name="com.jaspersoft.studio.field.label" value="comments"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="bill_bill_lines"/>
+	</field>
+	<field name="beforpro" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="beforpro"/>
+		<property name="com.jaspersoft.studio.field.label" value="beforpro"/>
+	</field>
+	<field name="discountvalue" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="discountvalue"/>
+		<property name="com.jaspersoft.studio.field.label" value="discountvalue"/>
+	</field>
+	<field name="billingfrequency" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.name" value="billingfrequency"/>
+		<property name="com.jaspersoft.studio.field.label" value="billingfrequency"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="bill_bill_lines"/>
+	</field>
+	<field name="line_createddate" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="line_createddate"/>
+		<property name="com.jaspersoft.studio.field.label" value="line_createddate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="bill_bill_lines"/>
+	</field>
+	<field name="parent_orderserviceid" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="parent_orderserviceid"/>
+		<property name="com.jaspersoft.studio.field.label" value="parent_orderserviceid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="bill_bill_lines"/>
+	</field>
+	<field name="currencyid" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.name" value="currencyid"/>
+		<property name="com.jaspersoft.studio.field.label" value="currencyid"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="bill_bill_lines"/>
+	</field>
+	<field name="currency_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="currency_name"/>
+		<property name="com.jaspersoft.studio.field.label" value="currency_name"/>
+	</field>
+	<field name="rundate" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="rundate"/>
+		<property name="com.jaspersoft.studio.field.label" value="rundate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="bill_run"/>
+	</field>
+	<field name="run_caption" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="run_caption"/>
+		<property name="com.jaspersoft.studio.field.label" value="run_caption"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="bill_run"/>
+	</field>
+	<field name="run_cover_to_date" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="run_cover_to_date"/>
+		<property name="com.jaspersoft.studio.field.label" value="run_cover_to_date"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="bill_run"/>
+	</field>
+	<field name="agentname" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="agentname"/>
+		<property name="com.jaspersoft.studio.field.label" value="agentname"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="bill_run"/>
+	</field>
+	<field name="laststatus" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="laststatus"/>
+		<property name="com.jaspersoft.studio.field.label" value="laststatus"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="bill_run"/>
+	</field>
+	<field name="laststatusdate" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="laststatusdate"/>
+		<property name="com.jaspersoft.studio.field.label" value="laststatusdate"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="bill_run"/>
+	</field>
+	<title height="802" splitType="Stretch">
+		<element kind="rectangle" uuid="56505324-916d-4b4e-be18-1ec98de3465b" x="-20" y="-20" width="595" height="802" backcolor="#0E1999">
+			<property name="com.jaspersoft.studio.unit.x" value="px"/>
+			<property name="com.jaspersoft.studio.unit.y" value="px"/>
+			<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<pen lineWidth="0.0"/>
+		</element>
+		<element kind="rectangle" uuid="d2e5a99e-cadc-4e46-80ef-f9c66df55b42" x="-20" y="-20" width="130" height="132" backcolor="#080B66" radius="0">
+			<pen lineWidth="0.0" lineStyle="Solid"/>
+		</element>
+		<element kind="rectangle" uuid="e2f020c0-bbc0-412c-baf7-be8b86835c5b" x="-20" y="339" width="40" height="132" backcolor="#080B66" radius="0">
+			<pen lineWidth="0.0" lineStyle="Solid"/>
+		</element>
+		<element kind="rectangle" uuid="04a0f853-25ab-419b-a56c-fb4f670d191f" x="445" y="-20" width="130" height="132" backcolor="#080B66" radius="0">
+			<pen lineWidth="0.0" lineStyle="Solid"/>
+		</element>
+		<element kind="rectangle" uuid="132fbb8d-14bf-4a62-8acd-96f376ba2abe" x="-20" y="-20" width="595" height="491" backcolor="#080B66" radius="50">
+			<pen lineWidth="0.0" lineStyle="Solid"/>
+		</element>
+		<element kind="staticText" uuid="4bc0c1af-b2f6-40d0-9915-34af50aad534" x="300" y="110" width="200" height="25" forecolor="#FFFFFF" fontName="Franklin Gothic Demi" fontSize="15.0" printRepeatedValues="false" bold="false" vTextAlign="Middle" style="Detail">
+			<text><![CDATA[INVOICE DETAILS:]]></text>
+			<property name="local_mesure_unitheight" value="pixel"/>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</element>
+		<element kind="staticText" uuid="f27015b6-396e-4698-8f2a-fc224d7e35c9" x="300" y="175" width="72" height="20" forecolor="#FFFFFF" fontSize="11.0" hTextAlign="Left" vTextAlign="Middle">
+			<text><![CDATA[Created Date:]]></text>
+			<box rightPadding="4"/>
+		</element>
+		<element kind="textField" uuid="813f0f5b-62bd-4563-8d89-25b7e7ec7bcf" x="390" y="180" width="84" height="20" forecolor="#FFFFFF" fontSize="11.0" pattern="EEEEE dd MMMMM yyyy" vTextAlign="Middle">
+			<expression><![CDATA[$F{invoice_createddate}]]></expression>
+		</element>
+		<element kind="image" uuid="643cddf0-1142-4a00-a170-5b11c7d555cc" x="300" y="20" width="120" height="60" forecolor="#FFFFFF" backcolor="#FFFFFF" hImageAlign="Center" style="SubTitle">
+			<expression><![CDATA[$P{LogoPath}]]></expression>
+		</element>
+		<element kind="staticText" uuid="dec6b581-e7c8-4fad-8cd7-06c91284f314" x="300" y="150" width="50" height="20" forecolor="#FFFFFF" fontSize="11.0" hTextAlign="Right" vTextAlign="Middle">
+			<text><![CDATA[Invoice #]]></text>
+			<box rightPadding="4"/>
+		</element>
+		<element kind="staticText" uuid="c4af1b73-a358-4e2a-a897-9e9ed1292eda" x="37" y="20" width="210" height="45" forecolor="#FCFAFA" markup="styled" fontSize="29.0" bold="true" vTextAlign="Middle">
+			<text><![CDATA[Invoice]]></text>
+			<property name="local_mesure_unitheight" value="pixel"/>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</element>
+		<element kind="staticText" uuid="96c3a22d-c1a1-4313-81a7-eb4a1d15e6a7" x="40" y="140" width="200" height="20" forecolor="#FAF7F7" backcolor="#FFFFFF" fontName="Franklin Gothic Demi" fontSize="15.0" bold="false" vTextAlign="Middle">
+			<text><![CDATA[BILLED TO:]]></text>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<property name="com.jaspersoft.studio.unit.width" value="px"/>
+		</element>
+		<element kind="rectangle" uuid="7e235505-c173-486f-a45a-caad2ddbf4b0" x="20" y="240" width="503" height="390" radius="20">
+			<pen lineColor="#FFFFFF"/>
+		</element>
+		<element kind="image" uuid="2864d3dd-9b30-49bc-88ad-76301927fdbe" x="190" y="570" width="159" height="49" hImageAlign="Center">
+			<expression><![CDATA[$P{LogoPath}]]></expression>
+		</element>
+		<element kind="staticText" uuid="85f62923-ea7a-43c2-9ab8-1328439fab75" x="300" y="440" width="80" height="20" bold="true">
+			<text><![CDATA[Discount]]></text>
+		</element>
+		<element kind="staticText" uuid="df20c43c-6add-494f-b1ef-79042e552736" x="300" y="460" width="80" height="20" bold="true">
+			<text><![CDATA[Tax]]></text>
+		</element>
+		<element kind="textField" uuid="e8a4b453-bb22-4d22-b406-e6265e2130b2" x="400" y="440" width="100" height="20">
+			<expression><![CDATA[$F{discountvalue}]]></expression>
+		</element>
+		<element kind="textField" uuid="acf92379-a981-4c68-91ff-203a628f2ee5" x="400" y="460" width="100" height="20">
+			<expression><![CDATA[$F{taxsum}]]></expression>
+		</element>
+		<element kind="staticText" uuid="779332e9-8786-493f-b08c-63d2434103a8" x="37" y="510" width="196" height="20" bold="true">
+			<text><![CDATA[City]]></text>
+		</element>
+		<element kind="textField" uuid="3bd7644b-2ca1-4334-b968-aff1e0c47f2c" x="37" y="530" width="100" height="30">
+			<expression><![CDATA[$F{billcity}]]></expression>
+		</element>
+		<element kind="staticText" uuid="c6ea7f50-b493-494b-9b58-23d14b69374d" x="280" y="660" width="205" height="20" forecolor="#FFFFFF" fontName="Franklin Gothic Demi" fontSize="11.0" vTextAlign="Middle">
+			<text><![CDATA[Contact]]></text>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<property name="com.jaspersoft.studio.unit.y" value="px"/>
+		</element>
+		<element kind="frame" uuid="a61ad7b0-2154-4061-9f96-94fe9b9b38b5" x="20" y="312" width="503" height="60" forecolor="#FFFFFF">
+			<element kind="component" uuid="5db26938-5577-43d9-a9ef-ab72ed26fb0d" x="0" y="1" width="503" height="60" forecolor="#050000">
+				<component kind="table">
+					<datasetRun uuid="f68c9fff-d795-4a2b-b12a-e7cd918b61fe" subDataset="tableDataset">
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						<parameter name="MaterialType">
+							<expression><![CDATA[$P{MaterialType}]]></expression>
+						</parameter>
+						<parameter name="Date_From">
+							<expression><![CDATA[$P{Date_From}]]></expression>
+						</parameter>
+						<parameter name="Date_To">
+							<expression><![CDATA[$P{Date_To}]]></expression>
+						</parameter>
+					</datasetRun>
+					<columnHeader>
+						<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+					</columnHeader>
+					<column kind="single" uuid="b39692fd-9cf7-4a90-b6b7-6fc19468c5da" width="110">
+						<columnHeader height="30" rowSpan="1" style="Table_CH">
+							<element kind="staticText" uuid="0db77fbb-ea41-4d8b-9fb5-fbca3f663f46" key="" x="0" y="0" width="110" height="30" forecolor="#000000" fontName="DejaVu Sans" fontSize="10.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
+								<text><![CDATA[Description]]></text>
+								<box leftPadding="2" style="Column header"/>
+							</element>
+						</columnHeader>
+						<detailCell height="30" style="Table_TD">
+							<element kind="textField" uuid="01b3896d-aa19-40a7-9640-309faf70a0d1" x="0" y="0" width="110" height="30" fontName="DejaVu Sans" fontSize="10.0" textAdjust="StretchHeight" hTextAlign="Center" vTextAlign="Middle" style="Detail">
+								<expression><![CDATA[$F{service}]]></expression>
+								<box leftPadding="2" style="Detail"/>
+							</element>
+						</detailCell>
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column1"/>
+					</column>
+					<column kind="single" uuid="daf4b1e0-ae8e-473c-b862-03b7cb9ee810" width="100">
+						<columnHeader height="30" rowSpan="1" style="Table_CH">
+							<element kind="staticText" uuid="f42e596b-deb7-4706-9c6a-0c361385c2fc" key="" x="0" y="0" width="100" height="30" forecolor="#000000" fontName="DejaVu Sans" fontSize="10.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
+								<text><![CDATA[Total]]></text>
+								<box leftPadding="2" style="Column header"/>
+							</element>
+						</columnHeader>
+						<detailCell height="30" style="Table_TD">
+							<element kind="textField" uuid="32662f25-2b49-45c4-bcc2-c698a00b3b25" x="0" y="0" width="100" height="30" fontName="DejaVu Sans" fontSize="10.0" textAdjust="StretchHeight" hTextAlign="Center" vTextAlign="Middle" style="Detail">
+								<expression><![CDATA[$F{total}]]></expression>
+								<box leftPadding="2" style="Detail"/>
+							</element>
+						</detailCell>
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column2"/>
+					</column>
+					<column kind="single" uuid="e247376c-2b05-436d-90c4-c941567ee995" width="90">
+						<columnHeader height="30" rowSpan="1" style="Table_CH">
+							<element kind="staticText" uuid="f8ea7065-686e-4416-8ab6-9a4f9efc8f99" key="" x="0" y="0" width="90" height="30" forecolor="#000000" fontName="DejaVu Sans" fontSize="10.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
+								<text><![CDATA[Credit]]></text>
+								<box leftPadding="2" style="Column header"/>
+							</element>
+						</columnHeader>
+						<detailCell height="30" style="Table_TD">
+							<element kind="textField" uuid="855835a3-8ce2-4650-9be8-462def171f32" x="0" y="0" width="90" height="30" fontName="DejaVu Sans" fontSize="10.0" textAdjust="StretchHeight" blankWhenNull="true" hTextAlign="Center" vTextAlign="Middle" style="Detail">
+								<expression><![CDATA[$F{creditvalue}]]></expression>
+								<box leftPadding="2" style="Detail"/>
+							</element>
+						</detailCell>
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column3"/>
+					</column>
+					<column kind="single" uuid="01f17ff9-d10e-4beb-bf4c-69d867aeb647" width="100">
+						<columnHeader height="30" rowSpan="1" style="Table_CH">
+							<element kind="staticText" uuid="c0a12f89-cfc6-4bb4-bf7f-3460771e2cac" key="" x="0" y="0" width="100" height="30" forecolor="#000000" fontName="DejaVu Sans" fontSize="10.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
+								<text><![CDATA[Debit]]></text>
+								<box leftPadding="2" style="Column header"/>
+							</element>
+						</columnHeader>
+						<detailCell height="30" style="Table_TD">
+							<element kind="textField" uuid="50e3f3b5-7941-4e64-ba36-b61478c9382d" x="0" y="0" width="100" height="30" fontName="DejaVu Sans" fontSize="10.0" textAdjust="StretchHeight" blankWhenNull="true" hTextAlign="Center" vTextAlign="Middle" style="Detail">
+								<expression><![CDATA[$F{debitvalue}]]></expression>
+								<box leftPadding="2" style="Detail"/>
+							</element>
+						</detailCell>
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column4"/>
+					</column>
+					<column kind="single" uuid="52e67f77-d8a0-47a2-8267-069cb182e5a9" width="104">
+						<columnHeader height="30" rowSpan="1" style="Table_CH">
+							<element kind="staticText" uuid="0687f580-3857-4e7f-bbd9-458d63c54952" key="" x="0" y="0" width="104" height="30" forecolor="#000000" fontName="DejaVu Sans" fontSize="10.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
+								<text><![CDATA[Currency_Name]]></text>
+								<box leftPadding="2" style="Column header"/>
+							</element>
+						</columnHeader>
+						<detailCell height="30" style="Table_TD">
+							<element kind="textField" uuid="943c18f0-b6c9-47f4-98d9-cea156fc00a9" x="0" y="0" width="104" height="30" fontName="DejaVu Sans" fontSize="10.0" textAdjust="StretchHeight" blankWhenNull="true" hTextAlign="Center" vTextAlign="Middle" style="Detail">
+								<expression><![CDATA[$F{currency_name}]]></expression>
+								<box leftPadding="2" style="Detail"/>
+							</element>
+						</detailCell>
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column5"/>
+					</column>
+				</component>
+				<property name="com.jaspersoft.studio.table.style.table_header" value="Table_TH"/>
+				<property name="com.jaspersoft.studio.table.style.column_header" value="Table_CH"/>
+				<property name="com.jaspersoft.studio.table.style.detail" value="Table_TD"/>
+			</element>
+			<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="d1c15611-30bf-4102-834b-6e47ec0602f7" x="300" y="510" width="80" height="19" forecolor="#050101" backcolor="#0E2B7D" fontSize="12.0" bold="true" vTextAlign="Middle">
+			<text><![CDATA[TOTAL]]></text>
+		</element>
+		<element kind="textField" uuid="307343f9-a8f2-4d48-9ad1-55dffd20b4db" x="400" y="510" width="100" height="19">
+			<expression><![CDATA[$F{total}]]></expression>
+		</element>
+		<element kind="textField" uuid="cfab0114-277d-4303-9708-606b26559280" x="382" y="145" width="100" height="30">
+			<expression><![CDATA[$F{invoiceno}]]></expression>
+		</element>
+		<element kind="textField" uuid="d3b29cec-faff-40e2-af12-697696519d2d" x="40" y="160" width="150" height="19">
+			<expression><![CDATA[$F{customername}]]></expression>
+		</element>
+		<element kind="textField" uuid="ef0dea5f-358a-4edb-b351-376cbad6a87f" x="40" y="180" width="100" height="30">
+			<expression><![CDATA[$F{billaddress}]]></expression>
+		</element>
+		<element kind="textField" uuid="6ae0e2ab-45ec-44d6-be7f-83d0aad067a1" x="280" y="680" width="130" height="19">
+			<expression><![CDATA[$F{contactemail}]]></expression>
+		</element>
+		<element kind="textField" uuid="bc2f60f7-1f93-42a5-816c-6df49b2a971f" x="37" y="660" width="150" height="30">
+			<expression><![CDATA[$F{billaddress}]]></expression>
+		</element>
+		<element kind="textField" uuid="48120b60-893f-42f1-b919-20adebed46e5" x="280" y="699" width="130" height="20">
+			<expression><![CDATA[$F{contactphone}]]></expression>
+		</element>
+	</title>
+	<columnHeader/>
+	<detail>
+		<band/>
+	</detail>
+	<lastPageFooter>
+		<property name="com.jaspersoft.studio.layout"/>
+	</lastPageFooter>
+</jasperReport>

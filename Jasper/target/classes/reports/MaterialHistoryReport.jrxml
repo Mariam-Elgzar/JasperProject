@@ -1,0 +1,455 @@
+<!-- Created with Jaspersoft Studio version 7.0.3.final using JasperReports Library version 7.0.3-41034ca841d452f3305ba55b9042260aaa1ab5dd  -->
+<jasperReport name="Cherry_Table_Based" language="java" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="4eedbb89-b4f6-4469-9ab6-f642a1688cf7">
+	<property name="template.engine" value="tabular_template"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value="IE1hdGVyaWFsVHJhbnMgIEFTICwxMTEsMTEsYzM2NTdkMzktYTY0NS00Y2E2LTkwOWQtMWJiMTQw&#xa;ODY3M2UyOw=="/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="New Data Adapter (2)"/>
+	<style name="Title" forecolor="#FFFFFF" fontName="Times New Roman" fontSize="50.0" bold="false"/>
+	<style name="SubTitle" forecolor="#CCCCCC" fontName="Times New Roman" fontSize="18.0" bold="false"/>
+	<style name="Column header" forecolor="#666666" fontName="Times New Roman" fontSize="14.0" bold="true"/>
+	<style name="Detail" mode="Transparent" fontName="Times New Roman" pdfFontName="Times-Roman"/>
+	<style name="Row" mode="Transparent" fontName="Times New Roman" pdfFontName="Times-Roman">
+		<conditionalStyle mode="Opaque" backcolor="#F0EFEF">
+			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
+		</conditionalStyle>
+	</style>
+	<style name="Table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+			<topPen lineWidth="1.0" lineColor="#000000"/>
+			<leftPen lineWidth="1.0" lineColor="#000000"/>
+			<bottomPen lineWidth="1.0" lineColor="#000000"/>
+			<rightPen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_CH" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+		<conditionalStyle backcolor="#D8D8D8">
+			<conditionExpression><![CDATA[$V{REPORT_COUNT}%2 == 0]]></conditionExpression>
+		</conditionalStyle>
+	</style>
+	<dataset name="tableDataset" uuid="b022afc2-2173-4a33-98df-503f2d9b4626">
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="New Data Adapter (2)"/>
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w1" value="657"/>
+		<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w2" value="331"/>
+		<parameter name="MaterialType" class="java.lang.String"/>
+		<parameter name="Date_From" class="java.lang.String"/>
+		<parameter name="Date_To" class="java.lang.String"/>
+		<query language="SQL"><![CDATA[SELECT
+    billing.*,
+    orders.*,
+    adjustment.*,
+    previous_balance.*,
+    previous_balance.previous_balance AS prev_balanc,
+    billing.total AS total_inv,
+    billing.paid AS paid_inv,
+    adjustment.adjustment AS adjust
+FROM (
+    SELECT
+        bh.invoiceno,
+        CASE
+            WHEN UPPER(SUBSTR(bh.invoiceno, 0, 4)) = UPPER('Temp') THEN 0
+            ELSE 1
+        END AS isserilaized,
+        bh.serializeddate AS dat,
+        bh.max_fromdate AS too,
+        bh.min_fromdate AS frm,
+        bh.total,
+        bh.prev_collectionvalue * -1 AS paid,
+        bh.valuesum,
+        bh.collectionstatusid,
+        'iQ' AS company,
+        bh.invoicetoname AS "KamName",
+        bh.contmail,
+        bh.invoicetoname AS "ContactName",
+        bh.contactphone AS "ContactMobile",
+        bh.contmail AS "ContactEmail"
+    FROM nts.bill_billheader bh
+    WHERE bh.invoiceno = '1247'
+) AS billing,
+(
+    SELECT *
+    FROM (
+        SELECT
+            -- Dynamic currency mapping
+            CASE
+                WHEN bl.currencyid = 1 THEN 'USD'
+                WHEN bl.currencyid = 3 THEN 'LE'
+                WHEN bl.currencyid = 2 THEN 'IQD'
+                ELSE 'IQD'
+            END AS currency,
+            'quotation_no' AS quotation_no,
+            'contract.name' AS contract,
+            'name' AS pricebasis,
+            'ponumber' AS ponumber,
+            'rosnumber' AS rosnumber,
+            'contractnumber' AS contractno,
+            bl.invoicefrom AS acteffdate,
+            bl.orderserviceid,
+            COALESCE(bl.service, '') AS circuitname,
+            COALESCE(bh.area, '') AS branch,
+            COALESCE(bh.billaddress, '') AS address,
+            '' AS fax,
+            COALESCE(bh.contactphone, '') AS cellphone,
+            COALESCE(bl.changerate, 1.0) AS changerate
+        FROM bill_billheader bh
+        JOIN bill_bill_lines bl ON bh.recid = bl.headerid
+        WHERE bh.invoiceno ='1247'
+        ORDER BY bl.entereddate DESC
+        LIMIT 1
+    ) AS latest_order
+) AS orders,
+(
+    SELECT
+        COALESCE(SUM(bl.creditvalue * COALESCE(bl.changerate, 1)), 0) * -1 AS adjustment
+    FROM bill_billheader bh
+    LEFT JOIN bill_bill_lines bl ON bh.recid = bl.headerid
+    WHERE bh.invoiceno ='1247'
+) AS adjustment,
+(
+    SELECT
+        COALESCE(bh.bill_pervpayment, 0) AS previous_balance
+    FROM bill_billheader bh
+    WHERE bh.invoiceno ='1247'
+    ) AS previous_balance ;]]></query>
+		<field name="invoiceno" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="invoiceno"/>
+			<property name="com.jaspersoft.studio.field.label" value="invoiceno"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+		</field>
+		<field name="isserilaized" class="java.lang.Integer">
+			<property name="com.jaspersoft.studio.field.name" value="isserilaized"/>
+			<property name="com.jaspersoft.studio.field.label" value="isserilaized"/>
+		</field>
+		<field name="dat" class="java.sql.Timestamp">
+			<property name="com.jaspersoft.studio.field.name" value="dat"/>
+			<property name="com.jaspersoft.studio.field.label" value="dat"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+		</field>
+		<field name="too" class="java.sql.Timestamp">
+			<property name="com.jaspersoft.studio.field.name" value="too"/>
+			<property name="com.jaspersoft.studio.field.label" value="too"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+		</field>
+		<field name="frm" class="java.sql.Timestamp">
+			<property name="com.jaspersoft.studio.field.name" value="frm"/>
+			<property name="com.jaspersoft.studio.field.label" value="frm"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+		</field>
+		<field name="total" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.name" value="total"/>
+			<property name="com.jaspersoft.studio.field.label" value="total"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+		</field>
+		<field name="paid" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.name" value="paid"/>
+			<property name="com.jaspersoft.studio.field.label" value="paid"/>
+		</field>
+		<field name="valuesum" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.name" value="valuesum"/>
+			<property name="com.jaspersoft.studio.field.label" value="valuesum"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+		</field>
+		<field name="collectionstatusid" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.name" value="collectionstatusid"/>
+			<property name="com.jaspersoft.studio.field.label" value="collectionstatusid"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+		</field>
+		<field name="company" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="company"/>
+			<property name="com.jaspersoft.studio.field.label" value="company"/>
+		</field>
+		<field name="KamName" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="KamName"/>
+			<property name="com.jaspersoft.studio.field.label" value="KamName"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+		</field>
+		<field name="contmail" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="contmail"/>
+			<property name="com.jaspersoft.studio.field.label" value="contmail"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+		</field>
+		<field name="ContactName" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="ContactName"/>
+			<property name="com.jaspersoft.studio.field.label" value="ContactName"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+		</field>
+		<field name="ContactMobile" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="ContactMobile"/>
+			<property name="com.jaspersoft.studio.field.label" value="ContactMobile"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+		</field>
+		<field name="ContactEmail" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="ContactEmail"/>
+			<property name="com.jaspersoft.studio.field.label" value="ContactEmail"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+		</field>
+		<field name="currency" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="currency"/>
+			<property name="com.jaspersoft.studio.field.label" value="currency"/>
+		</field>
+		<field name="quotation_no" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="quotation_no"/>
+			<property name="com.jaspersoft.studio.field.label" value="quotation_no"/>
+		</field>
+		<field name="contract" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="contract"/>
+			<property name="com.jaspersoft.studio.field.label" value="contract"/>
+		</field>
+		<field name="pricebasis" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="pricebasis"/>
+			<property name="com.jaspersoft.studio.field.label" value="pricebasis"/>
+		</field>
+		<field name="ponumber" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="ponumber"/>
+			<property name="com.jaspersoft.studio.field.label" value="ponumber"/>
+		</field>
+		<field name="rosnumber" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="rosnumber"/>
+			<property name="com.jaspersoft.studio.field.label" value="rosnumber"/>
+		</field>
+		<field name="contractno" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="contractno"/>
+			<property name="com.jaspersoft.studio.field.label" value="contractno"/>
+		</field>
+		<field name="acteffdate" class="java.sql.Date">
+			<property name="com.jaspersoft.studio.field.name" value="acteffdate"/>
+			<property name="com.jaspersoft.studio.field.label" value="acteffdate"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_bill_lines"/>
+		</field>
+		<field name="orderserviceid" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="orderserviceid"/>
+			<property name="com.jaspersoft.studio.field.label" value="orderserviceid"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_bill_lines"/>
+		</field>
+		<field name="circuitname" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="circuitname"/>
+			<property name="com.jaspersoft.studio.field.label" value="circuitname"/>
+		</field>
+		<field name="branch" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="branch"/>
+			<property name="com.jaspersoft.studio.field.label" value="branch"/>
+		</field>
+		<field name="address" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="address"/>
+			<property name="com.jaspersoft.studio.field.label" value="address"/>
+		</field>
+		<field name="fax" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="fax"/>
+			<property name="com.jaspersoft.studio.field.label" value="fax"/>
+		</field>
+		<field name="cellphone" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="cellphone"/>
+			<property name="com.jaspersoft.studio.field.label" value="cellphone"/>
+		</field>
+		<field name="changerate" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.name" value="changerate"/>
+			<property name="com.jaspersoft.studio.field.label" value="changerate"/>
+		</field>
+		<field name="adjustment" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.name" value="adjustment"/>
+			<property name="com.jaspersoft.studio.field.label" value="adjustment"/>
+		</field>
+		<field name="previous_balance" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.name" value="previous_balance"/>
+			<property name="com.jaspersoft.studio.field.label" value="previous_balance"/>
+		</field>
+		<field name="prev_balanc" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.name" value="prev_balanc"/>
+			<property name="com.jaspersoft.studio.field.label" value="prev_balanc"/>
+		</field>
+		<field name="total_inv" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.name" value="total_inv"/>
+			<property name="com.jaspersoft.studio.field.label" value="total_inv"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="bill_billheader"/>
+		</field>
+		<field name="paid_inv" class="java.lang.Long">
+			<property name="com.jaspersoft.studio.field.name" value="paid_inv"/>
+			<property name="com.jaspersoft.studio.field.label" value="paid_inv"/>
+		</field>
+		<field name="adjust" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.name" value="adjust"/>
+			<property name="com.jaspersoft.studio.field.label" value="adjust"/>
+		</field>
+	</dataset>
+	<parameter name="MaterialType" class="java.lang.String"/>
+	<parameter name="Date_From" class="java.lang.String"/>
+	<parameter name="Date_To" class="java.lang.String"/>
+	<parameter name="Path" class="java.lang.String"/>
+	<parameter name="Header" class="java.lang.String"/>
+	<parameter name="CompanyName" class="java.lang.String"/>
+	<parameter name="PlantName" class="java.lang.String"/>
+	<parameter name="PlantType" class="java.lang.String"/>
+	<parameter name="SiteName" class="java.lang.String"/>
+	<query language="sql"><![CDATA[]]></query>
+	<title height="192" splitType="Stretch"/>
+	<summary height="61" splitType="Stretch">
+		<element kind="component" uuid="5db26938-5577-43d9-a9ef-ab72ed26fb0d" x="0" y="0" width="555" height="60">
+			<component kind="table">
+				<datasetRun uuid="f68c9fff-d795-4a2b-b12a-e7cd918b61fe" subDataset="tableDataset">
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<parameter name="MaterialType">
+						<expression><![CDATA[$P{MaterialType}]]></expression>
+					</parameter>
+					<parameter name="Date_From">
+						<expression><![CDATA[$P{Date_From}]]></expression>
+					</parameter>
+					<parameter name="Date_To">
+						<expression><![CDATA[$P{Date_To}]]></expression>
+					</parameter>
+				</datasetRun>
+				<columnHeader>
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</columnHeader>
+				<column kind="single" uuid="b39692fd-9cf7-4a90-b6b7-6fc19468c5da" width="49">
+					<columnHeader height="30" rowSpan="1" style="Table_CH">
+						<element kind="staticText" uuid="0db77fbb-ea41-4d8b-9fb5-fbca3f663f46" key="" x="0" y="0" width="49" height="30" forecolor="#000000" fontName="DejaVu Sans" fontSize="10.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
+							<text><![CDATA[Id]]></text>
+							<box leftPadding="2" style="Column header"/>
+						</element>
+					</columnHeader>
+					<detailCell height="30" style="Table_TD">
+						<element kind="textField" uuid="01b3896d-aa19-40a7-9640-309faf70a0d1" x="0" y="0" width="49" height="30" fontName="DejaVu Sans" fontSize="10.0" textAdjust="StretchHeight" hTextAlign="Center" vTextAlign="Middle" style="Detail">
+							<expression><![CDATA[$F{invoiceno}]]></expression>
+							<box leftPadding="2" style="Detail"/>
+						</element>
+					</detailCell>
+					<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column1"/>
+				</column>
+				<column kind="single" uuid="daf4b1e0-ae8e-473c-b862-03b7cb9ee810" width="60">
+					<columnHeader height="30" rowSpan="1" style="Table_CH">
+						<element kind="staticText" uuid="f42e596b-deb7-4706-9c6a-0c361385c2fc" key="" x="0" y="0" width="60" height="30" forecolor="#000000" fontName="DejaVu Sans" fontSize="10.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
+							<text><![CDATA[Quantity]]></text>
+							<box leftPadding="2" style="Column header"/>
+						</element>
+					</columnHeader>
+					<detailCell height="30" style="Table_TD">
+						<element kind="textField" uuid="32662f25-2b49-45c4-bcc2-c698a00b3b25" x="0" y="0" width="60" height="30" fontName="DejaVu Sans" fontSize="10.0" textAdjust="StretchHeight" hTextAlign="Center" vTextAlign="Middle" style="Detail">
+							<expression><![CDATA[$F{dat}]]></expression>
+							<box leftPadding="2" style="Detail"/>
+						</element>
+					</detailCell>
+					<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column2"/>
+				</column>
+				<column kind="single" uuid="e247376c-2b05-436d-90c4-c941567ee995" width="90">
+					<columnHeader height="30" rowSpan="1" style="Table_CH">
+						<element kind="staticText" uuid="f8ea7065-686e-4416-8ab6-9a4f9efc8f99" key="" x="0" y="0" width="90" height="30" forecolor="#000000" fontName="DejaVu Sans" fontSize="10.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
+							<text><![CDATA[Notes]]></text>
+							<box leftPadding="2" style="Column header"/>
+						</element>
+					</columnHeader>
+					<detailCell height="30" style="Table_TD">
+						<element kind="textField" uuid="855835a3-8ce2-4650-9be8-462def171f32" x="0" y="0" width="90" height="30" fontName="DejaVu Sans" fontSize="10.0" textAdjust="StretchHeight" blankWhenNull="true" hTextAlign="Center" vTextAlign="Middle" style="Detail">
+							<expression><![CDATA[$F{valuesum}]]></expression>
+							<box leftPadding="2" style="Detail"/>
+						</element>
+					</detailCell>
+					<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column3"/>
+				</column>
+				<column kind="single" uuid="01f17ff9-d10e-4beb-bf4c-69d867aeb647" width="80">
+					<columnHeader height="30" rowSpan="1" style="Table_CH">
+						<element kind="staticText" uuid="c0a12f89-cfc6-4bb4-bf7f-3460771e2cac" key="" x="0" y="0" width="80" height="30" forecolor="#000000" fontName="DejaVu Sans" fontSize="10.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
+							<text><![CDATA[Consumption Type]]></text>
+							<box leftPadding="2" style="Column header"/>
+						</element>
+					</columnHeader>
+					<detailCell height="30" style="Table_TD">
+						<element kind="textField" uuid="50e3f3b5-7941-4e64-ba36-b61478c9382d" x="0" y="0" width="80" height="30" fontName="DejaVu Sans" fontSize="10.0" textAdjust="StretchHeight" blankWhenNull="true" hTextAlign="Center" vTextAlign="Middle" style="Detail">
+							<expression><![CDATA[$F{frm}]]></expression>
+							<box leftPadding="2" style="Detail"/>
+						</element>
+					</detailCell>
+					<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column4"/>
+				</column>
+				<column kind="single" uuid="52e67f77-d8a0-47a2-8267-069cb182e5a9" width="69">
+					<columnHeader height="30" rowSpan="1" style="Table_CH">
+						<element kind="staticText" uuid="0687f580-3857-4e7f-bbd9-458d63c54952" key="" x="0" y="0" width="69" height="30" forecolor="#000000" fontName="DejaVu Sans" fontSize="10.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
+							<text><![CDATA[Supplier Name]]></text>
+							<box leftPadding="2" style="Column header"/>
+						</element>
+					</columnHeader>
+					<detailCell height="30" style="Table_TD">
+						<element kind="textField" uuid="943c18f0-b6c9-47f4-98d9-cea156fc00a9" x="0" y="0" width="69" height="30" fontName="DejaVu Sans" fontSize="10.0" textAdjust="StretchHeight" blankWhenNull="true" hTextAlign="Center" vTextAlign="Middle" style="Detail">
+							<expression><![CDATA[$F{company}]]></expression>
+							<box leftPadding="2" style="Detail"/>
+						</element>
+					</detailCell>
+					<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column5"/>
+				</column>
+				<column kind="single" uuid="a6aeaf90-98a7-4aa1-a0af-9c9855c92815" width="69">
+					<columnHeader height="30" rowSpan="1" style="Table_CH">
+						<element kind="staticText" uuid="18439bdd-f96c-4400-a008-44a3c23596d9" key="" x="0" y="0" width="69" height="30" forecolor="#000000" fontName="DejaVu Sans" fontSize="10.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
+							<text><![CDATA[Receipt#]]></text>
+							<box leftPadding="2" style="Column header"/>
+						</element>
+					</columnHeader>
+					<detailCell height="30" style="Table_TD">
+						<element kind="textField" uuid="27350d82-2a57-404e-9222-e2a742405537" x="0" y="0" width="69" height="30" fontName="DejaVu Sans" fontSize="10.0" textAdjust="StretchHeight" blankWhenNull="true" hTextAlign="Center" vTextAlign="Middle" style="Detail">
+							<expression><![CDATA[$F{contmail}]]></expression>
+							<box leftPadding="2" style="Detail"/>
+						</element>
+					</detailCell>
+					<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column6"/>
+				</column>
+				<column kind="single" uuid="24d15e93-a37d-48c8-93f7-69a6209f870e" width="69">
+					<columnHeader height="30" rowSpan="1" style="Table_CH">
+						<element kind="staticText" uuid="3bc41f68-cb29-44fd-8728-aa49f125ca8d" key="" x="0" y="0" width="69" height="30" forecolor="#000000" fontName="DejaVu Sans" fontSize="10.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
+							<text><![CDATA[ModifiedAt]]></text>
+							<box leftPadding="2" style="Column header"/>
+						</element>
+					</columnHeader>
+					<detailCell height="30" style="Table_TD">
+						<element kind="textField" uuid="75460ceb-174a-4cd3-9f95-81df0cc14e6e" x="0" y="0" width="69" height="30" fontName="DejaVu Sans" fontSize="10.0" textAdjust="StretchHeight" hTextAlign="Center" vTextAlign="Middle" style="Detail">
+							<expression><![CDATA[$F{currency}]]></expression>
+							<box leftPadding="2" style="Detail"/>
+						</element>
+					</detailCell>
+					<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column7"/>
+				</column>
+				<column kind="single" uuid="9b9259c8-f55b-474b-b327-f23dc588988b" width="69">
+					<columnHeader height="30" rowSpan="1" style="Table_CH">
+						<element kind="staticText" uuid="530895f1-abc5-412a-b09e-7600b9c0f4d9" key="" x="0" y="0" width="69" height="30" forecolor="#000000" fontName="DejaVu Sans" fontSize="10.0" bold="true" hTextAlign="Center" vTextAlign="Middle" style="Column header">
+							<text><![CDATA[Modified By]]></text>
+							<box leftPadding="2" style="Column header"/>
+						</element>
+					</columnHeader>
+					<detailCell height="30" style="Table_TD">
+						<element kind="textField" uuid="28f59b53-3e6f-4d97-bb8d-8ebfc876fd14" x="0" y="0" width="69" height="30" fontName="DejaVu Sans" fontSize="10.0" textAdjust="StretchHeight" hTextAlign="Center" vTextAlign="Middle" style="Detail">
+							<expression><![CDATA[$F{fax}]]></expression>
+							<box leftPadding="2" style="Detail"/>
+						</element>
+					</detailCell>
+					<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column8"/>
+				</column>
+			</component>
+			<property name="com.jaspersoft.studio.table.style.table_header" value="Table_TH"/>
+			<property name="com.jaspersoft.studio.table.style.column_header" value="Table_CH"/>
+			<property name="com.jaspersoft.studio.table.style.detail" value="Table_TD"/>
+		</element>
+		<property name="local_mesure_unitheight" value="pixel"/>
+	</summary>
+</jasperReport>
